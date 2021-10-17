@@ -18,31 +18,61 @@
             el: '#app',
             template: `
             <div class="container">
-        <h1>Comentários</h1>
+        <h1 style="text-align: center; margin-top: 35px;">Comentários</h1>
         <hr>
         <div class="form-todo form-group">
             <p>
-                <input placeholder="nome" name="autor" class="form-control" type="text">
+                <input placeholder="nome" name="autor" class="form-control" type="text" v-model="name">
             </p>
             <p>
-                <label for="mensagem">mensagem</label>
-                <textarea name="mensagem" id="mensagem" class="form-control" placeholder="mensagem">
+                <textarea name="mensagem" id="mensagem" class="form-control" placeholder="Comentário" v-model="message">
                 </textarea>
             </p>
-            <button type="submit" class="btn btn-primary">Comentar</button>
+            <button v-on:click="addComent" type="submit" class="btn btn-primary">Comentar</button>
         </div>
         <hr>
         <div class="list-group">
-            <div class="list-group-item">
-                <span class="coment_autor">Daniel</span>
-                <p>mensgem teste</p>
+            <div class="list-group-item" v-for="(comment, index) in allComments">
+                <span class="coment_autor">Autor: <strong>{{comment.name}}</strong></span>
+                <p>Comentário: <strong>{{comment.message }}</strong></p>
                 <div>
-                    <a href="#" title="excluir"></a>
+                    <a href="#" title="excluir" v-on:click.prevent="removeComment(index)">Excluir</a>
                 </div>
             </div>
         </div>
     </div>
-            `
+            `,
+            data() {
+                return {
+                    comments: [],
+                    name: '',
+                    message: ''
+                }
+            },
+            methods: {
+                addComent() {
+                    if (this.message.trim() === '') {
+                        return alert('Faça um comentário!');
+                    }
+                    this.comments.push({
+                        name: this.name,
+                        message: this.message
+                    });
+                    this.name = '';
+                    this.message = '';
+                },
+                removeComment(index) {
+                    this.comments.splice(index, 1);
+                }
+            },
+            computed: {
+                allComments() {
+                    return this.comments.map(comment => ({
+                        ...comment,
+                        name: comment.name.trim() === '' ? 'Anônimo' : comment.name
+                    }))
+                }
+            }
         })
     </script>
 
